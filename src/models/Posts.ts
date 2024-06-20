@@ -6,7 +6,8 @@ const Post = new Schema({
     images: [String],
     likes: Number,
     comments: [{
-        _id:Types.ObjectId
+        _id:Types.ObjectId,
+        description: String
     }]
 })
 
