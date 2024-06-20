@@ -27,4 +27,14 @@ export class PostController{
             return res.status(500).json({message: "Erro interno do servidor!"})
         }
     }
+
+    async get(req:Request, res: Response){
+        try {
+            const posts = await Post.find()
+
+            return res.status(200).json(posts)
+        } catch (error) {
+            return res.status(500).json({message: "Erro interno do servidor!"})
+        }
+    }
 }
