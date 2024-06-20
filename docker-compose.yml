@@ -1,0 +1,13 @@
+services:
+  mongo:
+    image: mongo
+    restart: always
+    env_file:
+      - .env
+    environment:
+      MONGO-INITDB-ROOT-USERNAME: ${DB_USERNAME}
+      MONGO-INITDB-ROOT-PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./data/mongodb:/data/db
+    ports:
+      - ${DB_PORT}:${DB_PORT}
