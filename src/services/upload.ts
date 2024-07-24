@@ -12,7 +12,7 @@ const s3 = new aws.S3({
 
 export const uploadFile = async (path: string, buffer: Buffer, mimetype: string) => {
     const file = await s3.upload({
-        Bucket: process.env.BUCKET_NAME as string,
+        Bucket: process.env.BACKBLAZE_BUCKET as string,
         Key: path,
         Body: buffer,
         ContentType: mimetype

@@ -2,19 +2,28 @@ import { Request, Response } from 'express'
 import Post from "../models/Posts"
 import User from '../models/Users'
 import mongoose, { Types } from 'mongoose'
+import { uploadFile } from '../services/upload'
 
 export class PostController {
     async create(req: Request, res: Response) {
-        const { user_id, description, images } = req.body
+        const { user_id, description } = req.body
+
+
 
         try {
             const user = await User.findById(user_id)
 
-            console.log(user)
-
             if (!user) {
                 return res.status(404).json({ message: "Usuário não encontrado" })
             }
+
+            const files = req.files as Express.Multer.File[]
+
+            const images = await Promise.all(files.map(async file => {
+                const img = await uploadFile(`postagens/${file.originalname}`, file.buffer, file.mimetype)
+
+                return img
+            }))
 
             const newPost = await Post.create({
                 user_id: user._id,
@@ -26,6 +35,7 @@ export class PostController {
 
             return res.status(201).json(newPost)
         } catch (error) {
+            console.log(error)
             return res.status(500).json({ message: "Erro interno do servidor!" })
         }
     }
