@@ -16,7 +16,7 @@
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "noImplicitAny": true,
-    "types": ["node"]
+    
   },
   "include": [
     "./src/**/*"
