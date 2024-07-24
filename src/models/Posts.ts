@@ -7,6 +7,7 @@ const Post = new Schema({
     likes: [Types.ObjectId],
     comments: [{
         _id: Types.ObjectId,
+        user_id: Types.ObjectId,
         description: String
     }]
 })

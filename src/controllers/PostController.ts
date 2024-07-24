@@ -34,6 +34,58 @@ export class PostController {
         try {
             const posts = await Post.aggregate([
                 {
+                    $unwind: {
+                        path: '$comments',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'comments.user_id',
+                        foreignField: '_id',
+                        as: 'comments.user'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$comments.user',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$_id',
+                        comments: {
+                            $push: '$comments'
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'posts',
+                        localField: '_id',
+                        foreignField: '_id',
+                        as: 'postDetails'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$postDetails',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $addFields: {
+                        'postDetails.comments': '$comments'
+                    }
+                },
+                {
+                    $replaceRoot: {
+                        newRoot: '$postDetails'
+                    }
+                },
+                {
                     $lookup: {
                         from: 'users',
                         localField: 'user_id',
@@ -162,7 +214,7 @@ export class PostController {
 
     async commentPost(req: Request, res: Response) {
         const { id } = req.params
-        const { description, } = req.body
+        const { description, user_id } = req.body
 
         try {
             const post = await Post.findById(id)
@@ -171,10 +223,17 @@ export class PostController {
                 return res.status(404).json({ message: "Postagem não encontrada!" })
             }
 
+            const user = await User.findById(user_id)
+
+            if (!user) {
+                return res.status(404).json({ message: "Usuário não encontrado." })
+            }
+
             await Post.updateOne({ _id: id }, {
                 $push: {
                     comments: {
-                        _id: new mongoose.Types.ObjectId(),
+                        _id: new Types.ObjectId(),
+                        user_id: new Types.ObjectId(user_id),
                         description
                     }
                 }
