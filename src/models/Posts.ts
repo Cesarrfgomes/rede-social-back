@@ -1,12 +1,12 @@
-import {Schema, model, Types} from "mongoose"
+import { Schema, model, Types } from "mongoose"
 
 const Post = new Schema({
     user_id: Types.ObjectId,
     description: String,
     images: [String],
-    likes: Number,
+    likes: [Types.ObjectId],
     comments: [{
-        _id:Types.ObjectId,
+        _id: Types.ObjectId,
         description: String
     }]
 })
