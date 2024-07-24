@@ -1,6 +1,6 @@
 services:
   app:
-    build:
+    build: .
     restart: always
     container_name: app-social-network
     env_file:
